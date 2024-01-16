@@ -89,5 +89,5 @@ def main():
             # update OBSERVE_FOLDER_STATUS
             OBSERVE_FOLDER_STATUS = current_folder_status
 
-
-# main()
+if __name__ == '__main__':
+    main()
