@@ -1,4 +1,4 @@
-from datetime import datetime
+import time
 from pathlib import Path
 import os
 from PIL import Image
@@ -29,12 +29,15 @@ def call_4_images(image):
     payload_dct = {
         "image":return_img_base64(image)
     }
-        
-    request = requests.post( DOMAIN, json = payload_dct ).json()
     
-    for i in range(1,5):
-        result_image = base64_to_image(request['base64_image'+str(i)])
-        result_image.save('./output4imgs/'+ i +'_'+ datetime.now().strftime(f"%Y%m%d_%H%M%S")+'.png')
+    request = requests.post( DOMAIN, json = payload_dct ).json()
+    result_image_list = [base64_to_image(request['base64_image1']),
+                  base64_to_image(request['base64_image2']),
+                  base64_to_image(request['base64_image3']), 
+                  base64_to_image(request['base64_image4'])]
+    
+    for result in result_image_list:
+        result
 
 
 def main():

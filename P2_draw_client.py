@@ -408,34 +408,43 @@ def main():
                 elif mode == 'cursor_mode':
                     # EEG-mouse control system
                     if SSVEP_input == 'E' and in_check == 3: #END
-                        first_pt = mouse
-                        mode = next_mode
-                        in_check = 0
-                        button_E.show = False
-                        if mode == 'pencil_mode':
-                            COLOR = pencil_color
-                        elif mode == 'eraser_mode':
-                            COLOR = WHITE
-                        canvas.add_brush(color=COLOR,
-                                         position=mouse,
-                                         size=BRUSH_SIZE)
+                        SSVEP_input_list[3] += 1
+                        if SSVEP_input_list[3] == SSVEP_threshold:
+                            SSVEP_input_list = [0, 0, 0, 0]
+                            first_pt = mouse  #not used in current version
+                            mode = next_mode
+                            in_check = 0
+                            button_E.show = False
+                            if mode == 'pencil_mode':
+                                COLOR = pencil_color
+                            elif mode == 'eraser_mode':
+                                COLOR = WHITE
+                            canvas.add_brush(color=COLOR,
+                                             position=mouse,
+                                             size=BRUSH_SIZE)
+                            print('receive Order: Done')
 
                     elif MI_input == 'idle':
                         in_check = min(3,in_check+1)
                     elif MI_input == 'Right':
-                        mouse = mouse[0] + move_step, mouse[1]
+                        if canvas.get_rect().collidepoint(mouse[0] + move_step, mouse[1]):
+                            mouse = mouse[0] + move_step, mouse[1]
                         in_check = max(0,in_check - 1)
                     elif MI_input == 'Left':
-                        mouse = mouse[0] - move_step, mouse[1]
+                        if canvas.get_rect().collidepoint(mouse[0] - move_step, mouse[1]):
+                            mouse = mouse[0] - move_step, mouse[1]
                         in_check = max(0,in_check - 1)
                     elif MI_input == 'Down':
-                        mouse = mouse[0], mouse[1] + move_step
+                        if canvas.get_rect().collidepoint(mouse[0], mouse[1] + move_step):
+                            mouse = mouse[0], mouse[1] + move_step
                         in_check = max(0,in_check - 1)
                     elif MI_input == 'Up':
-                        mouse = mouse[0], mouse[1] - move_step
+                        if canvas.get_rect().collidepoint(mouse[0], mouse[1] - move_step):
+                            mouse = mouse[0], mouse[1] - move_step
                         in_check = max(0,in_check - 1)
 
-                elif mode == 'pencil_mode':
+                elif mode == 'pencil_mode' or mode == 'eraser_mode':
+                    BRUSH_COLOR = pencil_color if mode == 'pencil_mode' else WHITE
                     if SSVEP_input == 'E' and in_check == 3: #END
                         mode = 'menu'
                         in_menu = True
@@ -449,93 +458,46 @@ def main():
                     elif MI_input == 'Right':
                         for step in range(move_step):
                             canvas.add_brush(
-                                color=pencil_color,
+                                color=BRUSH_COLOR,
                                 position=[mouse[0] + step, mouse[1]],
                                 size=BRUSH_SIZE
                             )
-                        mouse = mouse[0] + move_step, mouse[1]
+                        if canvas.get_rect().collidepoint(mouse[0] + move_step, mouse[1]):
+                            mouse = mouse[0] + move_step, mouse[1]
                         in_check = max(0,in_check - 1)
 
                     elif MI_input == 'Left':
                         for step in range(move_step):
                             canvas.add_brush(
-                                color=pencil_color,
+                                color=BRUSH_COLOR,
                                 position=(mouse[0] - step, mouse[1]),
                                 size=BRUSH_SIZE
                             )
-                        mouse = mouse[0] - move_step, mouse[1]
+                        if canvas.get_rect().collidepoint(mouse[0] - move_step, mouse[1]):
+                            mouse = mouse[0] - move_step, mouse[1]
                         in_check = max(0,in_check - 1)
 
                     elif MI_input == 'Down':
                         for step in range(move_step):
                             canvas.add_brush(
-                                color=pencil_color,
+                                color=BRUSH_COLOR,
                                 position=(mouse[0] , mouse[1]+step),
                                 size=BRUSH_SIZE
                             )
-                        mouse = mouse[0], mouse[1] + move_step
+                        if canvas.get_rect().collidepoint(mouse[0], mouse[1] + move_step):
+                            mouse = mouse[0], mouse[1] + move_step
                         in_check = max(0,in_check - 1)
 
                     elif MI_input == 'Up':
                         for step in range(move_step):
                             canvas.add_brush(
-                                color=pencil_color,
+                                color=BRUSH_COLOR,
                                 position=(mouse[0], mouse[1]-step),
                                 size=BRUSH_SIZE
                             )
-                        mouse = mouse[0], mouse[1] - move_step
+                        if canvas.get_rect().collidepoint(mouse[0], mouse[1] - move_step):
+                            mouse = mouse[0], mouse[1] - move_step
                         in_check = max(0,in_check - 1)
-
-                elif mode == 'eraser_mode':
-
-                    if SSVEP_input == 'E' and in_check == 3: #END
-                        mode = 'menu'
-                        in_menu = True
-                        in_check = 0
-                        newsave = canvas.save()
-                        last2save = [last2save[1],newsave]
-
-                    elif MI_input == 'idle':
-                        in_check = min(3,in_check+1)
-                    elif MI_input == 'Right':
-                        for step in range(move_step):
-                            canvas.add_brush(
-                                color=WHITE,
-                                position=[mouse[0] + step, mouse[1]],
-                                size=BRUSH_SIZE
-                            )
-                        mouse = mouse[0] + move_step, mouse[1]
-                        in_check = max(0, in_check - 1)
-
-                    elif MI_input == 'Left':
-                        for step in range(move_step):
-                            canvas.add_brush(
-                                color=WHITE,
-                                position=(mouse[0] - step, mouse[1]),
-                                size=BRUSH_SIZE
-                            )
-                        mouse = mouse[0] - move_step, mouse[1]
-                        in_check = max(0, in_check - 1)
-
-                    elif MI_input == 'Down':
-                        for step in range(move_step):
-                            canvas.add_brush(
-                                color=WHITE,
-                                position=(mouse[0], mouse[1] + step),
-                                size=BRUSH_SIZE
-                            )
-                        mouse = mouse[0], mouse[1] + move_step
-                        in_check = max(0, in_check - 1)
-
-                    elif MI_input == 'Up':
-                        for step in range(move_step):
-                            canvas.add_brush(
-                                color=WHITE,
-                                position=(mouse[0], mouse[1] - step),
-                                size=BRUSH_SIZE
-                            )
-                        mouse = mouse[0], mouse[1] - move_step
-                        in_check = max(0, in_check - 1)
 
 
                 """elif mode == 'color_mode':
@@ -602,12 +564,155 @@ def main():
                 # Reset canvas when "R" is pressed
                 if event.key == pygame.K_r:
                     canvas.reset()
+                    in_menu=True
+                    mode = 'menu'
                 """# Open/Close button blinking when "F" is pressed
                 if event.key == pygame.K_f:
                     is_flashing = not is_flashing"""
+                #pencil when "P" is pressed
+                if event.key == pygame.K_p:
+                    mode = 'cursor_mode'
+                    next_mode = 'pencil_mode'
+                    in_menu = False
+                    print('switch to Pencil mode')
+                #eraser when "E" is pressed
+                if event.key == pygame.K_e:
+                    mode = 'cursor_mode'
+                    next_mode = 'eraser_mode'
+                    in_menu = False
+                    print('switch to Eraser mode')
+
+                if event.key == pygame.K_UP:
+                    if mode == 'cursor_mode':
+                        if canvas.get_rect().collidepoint(mouse[0], mouse[1] - move_step):
+                            mouse = mouse[0], mouse[1] - move_step
+                    elif mode == 'pencil_mode':
+                        for step in range(move_step):
+                            canvas.add_brush(
+                                color=pencil_color,
+                                position=(mouse[0], mouse[1] - step),
+                                size=BRUSH_SIZE
+                            )
+                        if canvas.get_rect().collidepoint(mouse[0], mouse[1] - move_step):
+                            mouse = mouse[0], mouse[1] - move_step
+                    elif mode == 'eraser_mode':
+                        for step in range(move_step):
+                            canvas.add_brush(
+                                color=WHITE,
+                                position=(mouse[0], mouse[1] - step),
+                                size=BRUSH_SIZE
+                            )
+                        if canvas.get_rect().collidepoint(mouse[0], mouse[1] - move_step):
+                            mouse = mouse[0], mouse[1] - move_step
+                if event.key == pygame.K_DOWN:
+                    if mode == 'cursor_mode':
+                        if canvas.get_rect().collidepoint(mouse[0], mouse[1] + move_step):
+                            mouse = mouse[0], mouse[1] + move_step
+                    elif mode == 'pencil_mode':
+                        for step in range(move_step):
+                            canvas.add_brush(
+                                color=pencil_color,
+                                position=(mouse[0], mouse[1] + step),
+                                size=BRUSH_SIZE
+                            )
+                        if canvas.get_rect().collidepoint(mouse[0], mouse[1] + move_step):
+                            mouse = mouse[0], mouse[1] + move_step
+                    elif mode == 'eraser_mode':
+                        for step in range(move_step):
+                            canvas.add_brush(
+                                color=WHITE,
+                                position=(mouse[0], mouse[1] + step),
+                                size=BRUSH_SIZE
+                            )
+                        if canvas.get_rect().collidepoint(mouse[0], mouse[1] + move_step):
+                            mouse = mouse[0], mouse[1] + move_step
+                if event.key == pygame.K_LEFT:
+                    if mode == 'cursor_mode':
+                        if canvas.get_rect().collidepoint(mouse[0] - move_step, mouse[1]):
+                            mouse = mouse[0] - move_step, mouse[1]
+                    elif mode == 'pencil_mode':
+                        for step in range(move_step):
+                            canvas.add_brush(
+                                color=pencil_color,
+                                position=(mouse[0] - step, mouse[1]),
+                                size=BRUSH_SIZE
+                            )
+                        if canvas.get_rect().collidepoint(mouse[0] - move_step, mouse[1]):
+                            mouse = mouse[0] - move_step, mouse[1]
+                    elif mode == 'eraser_mode':
+                        for step in range(move_step):
+                            canvas.add_brush(
+                                color=WHITE,
+                                position=(mouse[0] - step, mouse[1]),
+                                size=BRUSH_SIZE
+                            )
+                        if canvas.get_rect().collidepoint(mouse[0] - move_step, mouse[1]):
+                            mouse = mouse[0] - move_step, mouse[1]
+                if event.key == pygame.K_RIGHT:
+                    if mode == 'cursor_mode':
+                        if canvas.get_rect().collidepoint(mouse[0] + move_step, mouse[1]):
+                            mouse = mouse[0] + move_step, mouse[1]
+                    elif mode == 'pencil_mode':
+                        for step in range(move_step):
+                            canvas.add_brush(
+                                color=pencil_color,
+                                position=[mouse[0] + step, mouse[1]],
+                                size=BRUSH_SIZE
+                            )
+                        if canvas.get_rect().collidepoint(mouse[0] + move_step, mouse[1]):
+                            mouse = mouse[0] + move_step, mouse[1]
+                    elif mode == 'eraser_mode':
+                        for step in range(move_step):
+                            canvas.add_brush(
+                                color=WHITE,
+                                position=[mouse[0] + step, mouse[1]],
+                                size=BRUSH_SIZE
+                            )
+                        if canvas.get_rect().collidepoint(mouse[0] + move_step, mouse[1]):
+                            mouse = mouse[0] + move_step, mouse[1]
+                #done when "D" is pressed
+                if event.key == pygame.K_d:
+                    if mode == "cursor_mode":
+                        first_pt = mouse #not used in current version
+                        mode = next_mode
+                        if mode == 'pencil_mode':
+                            COLOR = pencil_color
+                        elif mode == 'eraser_mode':
+                            COLOR = WHITE
+                        canvas.add_brush(color=COLOR,
+                                         position=mouse,
+                                         size=BRUSH_SIZE)
+                    elif mode == "pencil_mode" or mode == "eraser_mode":
+                        newsave = canvas.save()
+                        last2save = [last2save[1], newsave]
+                        in_menu = True
+                        mode = 'menu'
+                        button_A.img = pygame.transform.scale(
+                            pygame.image.load(path / 'icons' / 'undo.png'), (80, 80))
+
+                #Undo/Redo when "U" is pressed
+                if event.key == pygame.K_u:
+                    if last2save[0] != "":
+                        if mode == 'menu':
+                            canvas.load(last2save[0])
+                            last2save = [last2save[1], last2save[0]]
+                            mode = 'redo_menu'
+                            button_A.img = pygame.transform.scale(
+                                pygame.image.load(path / 'icons' / 'redo.png'), (80, 80))
+                        elif mode == 'redo_menu':
+                            canvas.load(last2save[0])
+                            last2save = [last2save[1], last2save[0]]
+                            mode = 'menu'
+                            button_A.img = pygame.transform.scale(
+                                pygame.image.load(path / 'icons' / 'undo.png'), (80, 80))
+                    print('switch to Undo mode')
+
+                # back to menu when "M" is pressed
                 if event.key == pygame.K_m:
                     in_menu = True
-                if event.key == pygame.K_q: #quit
+                    mode = 'menu'
+                # quit when "Q" is pressed, make animated gif
+                if event.key == pygame.K_q:
                     # make gif
                     print('make gif')
                     frames =[]
@@ -618,13 +723,16 @@ def main():
                                 frames.append(imageio.imread(str(OUTPUT_FOLDER_PATH / output )))
                                 file_fetch = True
                             except: 
-                                time.sleep(0.1 )
+                                pygame.time.wait(100)
+                                #time.sleep(0.1 )
                     print('get all frames')
                     imageio.mimsave(str(OUTPUT_GIF_PATH) + "/output_gif_" + datetime.now().strftime(f"%Y%m%d_%H%M%S") + ".gif", frames, 'GIF', duration=1)
                     
                     # wang
                     last_image = Image.open(str(OUTPUT_FOLDER_PATH / OUTPUT_LIST[-1]))
                     call_4_images(last_image)
+
+                    running = False
 
 
             if event.type == MOUSEBUTTONDOWN:
