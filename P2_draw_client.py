@@ -446,11 +446,14 @@ def main():
                 elif mode == 'pencil_mode' or mode == 'eraser_mode':
                     BRUSH_COLOR = pencil_color if mode == 'pencil_mode' else WHITE
                     if SSVEP_input == 'E' and in_check == 3: #END
-                        mode = 'menu'
-                        in_menu = True
-                        in_check = 0
-                        newsave = canvas.save()
-                        last2save = [last2save[1], newsave]
+                        SSVEP_input_list[3] += 1
+                        if SSVEP_input_list[3] == SSVEP_threshold:
+                            SSVEP_input_list = [0, 0, 0, 0]
+                            mode = 'menu'
+                            in_menu = True
+                            in_check = 0
+                            newsave = canvas.save()
+                            last2save = [last2save[1], newsave]
 
                     elif MI_input == 'idle':
                         in_check = min(3,in_check+1)
