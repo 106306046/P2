@@ -321,9 +321,6 @@ def main():
                 SSVEP_input = last_order[3]
 
                 if mode == 'menu' or mode == 'redo_menu':
-                    if mode == 'menu':
-                        button_A.img = pygame.transform.scale(pygame.image.load(path / 'icons' / 'undo.png'), (80, 80))
-
                     in_menu = True
                     mouse = start_point[:]
 
@@ -351,7 +348,7 @@ def main():
                                         pygame.image.load(path / 'icons' / 'undo.png'), (80, 80))
                                 print('receive Order: Redo')
 
-
+                    #eraser
                     elif SSVEP_input == 'B':
                         SSVEP_input_list[1] += 1
                         if SSVEP_input_list[1] == SSVEP_threshold:
@@ -360,6 +357,8 @@ def main():
                             next_mode = 'eraser_mode'
                             in_menu = False
                             print('switch to Eraser mode')
+                            button_A.img = pygame.transform.scale(pygame.image.load(path / 'icons' / 'eraser.png'),
+                                                                  (80, 80))
 
                     #elif SSVEP_input == 'C':
                     #    mode = 'color_mode'
@@ -373,6 +372,8 @@ def main():
                             next_mode = 'pencil_mode'
                             in_menu = False
                             print('switch to Pencil mode')
+                            button_A.img = pygame.transform.scale(pygame.image.load(path / 'icons' / 'pencil.png'),
+                                                                  (80, 80))
 
                     """elif mode == 'redo_menu':
                     in_menu = True
@@ -406,7 +407,7 @@ def main():
 
                 # EEG-mouse control system
                 elif mode == 'cursor_mode':
-                    # EEG-mouse control system
+
                     if SSVEP_input == 'E' and in_check == 3: #END
                         SSVEP_input_list[3] += 1
                         if SSVEP_input_list[3] == SSVEP_threshold:
@@ -454,6 +455,8 @@ def main():
                             in_check = 0
                             newsave = canvas.save()
                             last2save = [last2save[1], newsave]
+                            button_A.img = pygame.transform.scale(pygame.image.load(path / 'icons' / 'undo.png'),
+                                                                  (80, 80))
 
                     elif MI_input == 'idle':
                         in_check = min(3,in_check+1)
@@ -577,12 +580,16 @@ def main():
                     mode = 'cursor_mode'
                     next_mode = 'pencil_mode'
                     in_menu = False
+                    button_A.img = pygame.transform.scale(pygame.image.load(path / 'icons' / 'pencil.png'),
+                                                          (80, 80))
                     print('switch to Pencil mode')
                 #eraser when "E" is pressed
                 if event.key == pygame.K_e:
                     mode = 'cursor_mode'
                     next_mode = 'eraser_mode'
                     in_menu = False
+                    button_A.img = pygame.transform.scale(pygame.image.load(path / 'icons' / 'eraser.png'),
+                                                          (80, 80))
                     print('switch to Eraser mode')
 
                 if event.key == pygame.K_UP:
@@ -819,7 +826,8 @@ def main():
                 button.update(current_time)
             button_E.show = False
         else:
-            for button in button_list[:-1]:
+            button_A.show = True
+            for button in button_list[1:-1]:
                 button.show = False
             if in_check >= 3:
                 current_time = pygame.time.get_ticks()
