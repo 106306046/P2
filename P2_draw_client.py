@@ -21,7 +21,7 @@ def main():
     OUTPUT_FOLDER_PATH = path / 'outputimg'
     SAVE_FOLDER_PATH = path / 'saveimg'
     OUTPUT_GIF_PATH = path / 'outputgif'
-    OUTPUT_4img_PATH = path / 'output4img'
+    OUTPUT_4img_PATH = path / 'output4imgs'
 
     OUTPUT_LIST = []
     # DONE_OUTPUT_LIST = []
@@ -733,14 +733,15 @@ def main():
                                 frames.append(imageio.imread(str(OUTPUT_FOLDER_PATH / output )))
                                 file_fetch = True
                             except: 
-                                pygame.time.wait(100)
-                                #time.sleep(0.1 )
+                                # pygame.time.wait(100)
+                                print('sleep')
+                                # time.sleep(0.1 )
                     print('get all frames')
                     imageio.mimsave(str(OUTPUT_GIF_PATH) + "/output_gif_" + datetime.now().strftime(f"%Y%m%d_%H%M%S") + ".gif", frames, 'GIF', duration=1)
                     
                     # wang
-                    last_image = Image.open(str(OUTPUT_FOLDER_PATH / OUTPUT_LIST[-1]))
-                    call_4_images(last_image)
+                    last_image = Image.open(str(SAVE_FOLDER_PATH / OUTPUT_LIST[-1]))
+                    call_4_images(str(OUTPUT_4img_PATH),last_image)
 
                     running = False
 

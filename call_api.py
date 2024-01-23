@@ -1,4 +1,4 @@
-import time
+from datetime import datetime
 from pathlib import Path
 import os
 from PIL import Image
@@ -22,22 +22,29 @@ def base64_to_image(base64_str):
     img = Image.open(image_data)
     return img
 
-def call_4_images(image):
+def call_4_images(path, image):
+    try:
+        print('get 4 images')
 
-    DOMAIN = 'http://140.114.30.94:7788/'+'/upload_imgs'
+        DOMAIN = 'http://140.114.30.94:7788/'+'/upload_imgs'
 
-    payload_dct = {
-        "image":return_img_base64(image)
-    }
-    
-    request = requests.post( DOMAIN, json = payload_dct ).json()
-    result_image_list = [base64_to_image(request['base64_image1']),
-                  base64_to_image(request['base64_image2']),
-                  base64_to_image(request['base64_image3']), 
-                  base64_to_image(request['base64_image4'])]
-    
-    for result in result_image_list:
-        result
+        payload_dct = {
+            "image":return_img_base64(image)
+        }
+        
+        response = requests.post( DOMAIN, json = payload_dct ).json()
+        print(response)
+        result_image_list = [base64_to_image(response['base64_image1']),
+                    base64_to_image(response['base64_image2']),
+                    base64_to_image(response['base64_image3']), 
+                    base64_to_image(response['base64_image4'])]
+        i=1
+        for result in result_image_list:
+            result.save(path + '/' + datetime.now().strftime("%Y_%m_%d_%I_%M_%S_%p") + '_' + str(i) + '.jpg')
+            i+=1
+            
+    except Exception as e:
+        print(e)
 
 
 def main():
