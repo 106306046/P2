@@ -11,6 +11,13 @@ import imageio
 from call_api import call_4_images
 from PIL import Image
 
+def print_decorator(func):
+    def wrapped_func(*args,**kwargs):
+        return func("P2_draw_client.py: ",*args,**kwargs)
+    return wrapped_func
+
+print = print_decorator(print)
+
 def main():
 
     # --- path ---
@@ -724,7 +731,6 @@ def main():
                 # quit when "Q" is pressed, make animated gif
                 if event.key == pygame.K_q:
                     # make gif
-                    print('make gif')
                     frames =[]
                     for output in OUTPUT_LIST:
                         file_fetch = False
@@ -736,10 +742,9 @@ def main():
                                 # pygame.time.wait(100)
                                 print('sleep')
                                 # time.sleep(0.1 )
-                    print('get all frames')
+                                
                     imageio.mimsave(str(OUTPUT_GIF_PATH) + "/output_gif_" + datetime.now().strftime(f"%Y%m%d_%H%M%S") + ".gif", frames, 'GIF', duration=1)
                     
-                    # wang
                     last_image = Image.open(str(SAVE_FOLDER_PATH / OUTPUT_LIST[-1]))
                     call_4_images(str(OUTPUT_4img_PATH),last_image)
 
